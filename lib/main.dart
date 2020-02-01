@@ -41,39 +41,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class ExampleLocalizations {
-  static ExampleLocalizations of(BuildContext context) {
-    return Localizations.of<ExampleLocalizations>(
-        context, ExampleLocalizations);
-  }
-
-  const ExampleLocalizations(this._count);
-
-  final bool _count;
-
-  String get title => 'Tapped $_count times';
-}
-
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /// Tons of small widgets!
-      ///
-      /// Splitting our app in small widgets like [Title] or [CounterLabel] is
-      /// useful for rebuild optimization.
-      ///
-      /// Since they are instanciated using `const`, they won't unnecessarily
-      /// rebuild when their parent changes.
-      /// But they can still have dynamic content, as they can obtain providers!
-      ///
-      /// This means only the widgets that depends on a provider to rebuild when they change.
-      /// Alternatively, we could use [Consumer] or [Selector] to acheive the
-      /// same result.
       appBar: AppBar(title: Text("IIT JMU Entry App")),
-      body: const Center(child: CounterLabel()),
+      body: const Center(child: HintText()),
       floatingActionButton: const GetOutButton(),
     );
   }
@@ -107,38 +82,50 @@ class GetOutFormWidget extends StatefulWidget {
 }
 
 class _GetOutFormWidgetState extends State<GetOutFormWidget> {
-  final formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          BasicDateTimeField(),
-          SizedBox(height: 24),
-          // RaisedButton()
-        ],
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: "Purpose",
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: "Phone Number",
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                // else if()
+                return null;
+              },
+            ),
+            // RaisedButton()
+          ],
+        ),
       ),
     );
   }
 }
 
-class BasicDateTimeField extends StatelessWidget {
-  final format = DateFormat("dd-MM-yyyy HH:mm");
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          TextFormField(
-            decoration: InputDecoration(labelText:"Purpose",border: OutlineInputBorder()),
-          )
-        ]);
-  }
-}
-
-class CounterLabel extends StatelessWidget {
-  const CounterLabel({Key key}) : super(key: key);
+class HintText extends StatelessWidget {
+  const HintText({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -147,16 +134,15 @@ class CounterLabel extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        QrImage(
-          data: 'This is a simple QR code',
-          version: QrVersions.auto,
-          size: 320,
-          gapless: false,
-        ),
-        Text(
-          '${insideCampus.inside}',
-          style: Theme.of(context).textTheme.display1,
-        ),
+        insideCampus.inside
+            ? Text(
+                'you are inside IIT Jammu campus. Press the button at bottom right',
+                style: Theme.of(context).textTheme.display1,
+              )
+            : Text(
+                'you are outside IIT Jammu campus. Scan the QR to get in',
+                style: Theme.of(context).textTheme.display1,
+              ),
       ],
     );
   }
