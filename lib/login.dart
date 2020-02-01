@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'dart:async';
-import 'dart:convert' show json;
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import "package:http/http.dart" as http;
 import 'package:fluttertoast/fluttertoast.dart';
 
 GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -31,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
         _currentUser = account;
       });
       if (_currentUser != null) {
+        
         // _handleGetContact();
       }
     });
@@ -64,16 +64,17 @@ class _LoginPageState extends State<LoginPage> {
             title: Text(_currentUser.displayName ?? ''),
             subtitle: Text(_currentUser.email ?? ''),
           ),
-          // const Text("Signed in successfully."),
-          // Text(_contactText ?? ''),
+          QrImage(
+          data: 'This is a simple QR code',
+          version: QrVersions.auto,
+          size: 320,
+          gapless: false,
+        ),
+
           RaisedButton(
             child: const Text('SIGN OUT'),
             onPressed: _handleSignOut,
           ),
-          // RaisedButton(
-          //   child: const Text('REFRESH'),
-          //   onPressed: _handleGetContact,
-          // ),
         ],
       );
     } else {

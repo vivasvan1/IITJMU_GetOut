@@ -33,12 +33,6 @@ class MyApp extends StatelessWidget {
       child: Consumer<InsideCampus>(
         builder: (context, insideCampus, _) {
           return MaterialApp(
-            supportedLocales: const [Locale('en')],
-            localizationsDelegates: [
-              DefaultMaterialLocalizations.delegate,
-              DefaultWidgetsLocalizations.delegate,
-              _ExampleLocalizationsDelegate(insideCampus.inside),
-            ],
             home: const MyHomePage(),
           );
         },
@@ -58,24 +52,6 @@ class ExampleLocalizations {
   final bool _count;
 
   String get title => 'Tapped $_count times';
-}
-
-class _ExampleLocalizationsDelegate
-    extends LocalizationsDelegate<ExampleLocalizations> {
-  const _ExampleLocalizationsDelegate(this.count);
-
-  final bool count;
-
-  @override
-  bool isSupported(Locale locale) => locale.languageCode == 'en';
-
-  @override
-  Future<ExampleLocalizations> load(Locale locale) {
-    return SynchronousFuture(ExampleLocalizations(count));
-  }
-
-  @override
-  bool shouldReload(_ExampleLocalizationsDelegate old) => old.count != count;
 }
 
 class MyHomePage extends StatelessWidget {
