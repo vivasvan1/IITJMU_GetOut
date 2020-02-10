@@ -14,6 +14,7 @@ class UserRepository extends ChangeNotifier {
       : _auth = FirebaseAuth.instance,
         _googleSignIn = GoogleSignIn() {
     _googleSignIn.onCurrentUserChanged.listen(_onAuthStateChanged);
+    _onAuthStateChanged(null);
   }
 
   Status get status => _status;
@@ -48,13 +49,14 @@ class UserRepository extends ChangeNotifier {
     return Future.delayed(Duration.zero);
   }
 
-  Future<void> _onAuthStateChanged(GoogleSignInAccount account) {
-      if (account == null) {
+  void _onAuthStateChanged(GoogleSignInAccount account) {
+    if (account == null) {
+      print("user variable is null.");
       _status = Status.Unauthenticated;
     } else {
       _googleUser = account;
       _status = Status.Authenticated;
     }
-    notifyListeners();  
-}
+    notifyListeners();
+  }
 }
