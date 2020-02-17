@@ -27,11 +27,13 @@ class UserRepository extends ChangeNotifier {
       _googleUser = await _googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth =
           await _googleUser.authentication;
+
       final AuthCredential credential = GoogleAuthProvider.getCredential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
       await _auth.signInWithCredential(credential);
+      
       return true;
     } catch (e) {
       print(e);
@@ -51,7 +53,7 @@ class UserRepository extends ChangeNotifier {
 
   void _onAuthStateChanged(GoogleSignInAccount account) {
     if (account == null) {
-      print("user variable is null.");
+      // print("user variable is null.");
       _status = Status.Unauthenticated;
     } else {
       _googleUser = account;
