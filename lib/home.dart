@@ -19,8 +19,10 @@ class UserInfoPage extends StatelessWidget {
             case MyState.Inside:
               return Inside(user: user);
             case MyState.Approving:
-              return Approving();
+              return Approving(user: user);
             case MyState.Outside:
+            case MyState.Loading:
+              return Center(child: CircularProgressIndicator(),);
             // return LoginPage();
           }
         },

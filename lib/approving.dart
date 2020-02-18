@@ -6,54 +6,87 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:get_out/user_state.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Approving extends StatefulWidget {
-  Approving({Key key}) : super(key: key);
+  GoogleSignInAccount user;
+  Approving({Key key, this.user}) : super(key: key);
 
   @override
   _ApprovingState createState() => _ApprovingState();
 }
 
 class _ApprovingState extends State<Approving> {
+  static const String _loadingTextRussian = 'Loading...';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("IIT Jammu GetOut Aproving"),
-      ),
-      // body: Center(
-      //   child: Column(
-      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //     children: <Widget>[
-      //       Column(
-      //         children: <Widget>[
-      //           Text(Provider.of<UserRepository>(context, listen: false)
-      //               .user
-      //               .email),
-      //           Text("Please Scan below QrCode at the guard post for entry approval."),
-      //           QrImage.withQr(qr: QrCode.fromData(data: "asdf", errorCorrectLevel: 2))
-      //         ],
-      //       ),
-      //       Row(
-      //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //         children: <Widget>[
-      //           RaisedButton(
-      //             child: Text("Your Inout Register"),
-      //             onPressed: () => {},
-      //           ),
-      //           RaisedButton(
-      //             child: Text("SIGN OUT"),
-      //             onPressed: () =>
-      //             {}
-      //                 // Provider.of<UserRepository>(context, listen: false)
-      //                 //     .signOut(),
-      //           ),
-      //         ],
-      //       )
-      //     ],
-      //   ),
-      // ),
+        appBar: AppBar(
+          title: Text("IIT Jammu GetOut Aproving"),
+        ),
+        body: Container(
+          child: StreamBuilder(
+            stream: Firestore.instance
+                .collection('users')
+                .document(widget.user.email.substring(0, 11))
+                .collection("inout_register")
+                .orderBy("approved", descending: false)
+                .snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (!snapshot.hasData)
+                return const Center(
+                    child: Text(
+                  _loadingTextRussian,
+                  style: TextStyle(fontSize: 25.0, color: Colors.grey),
+                ));
+              return ListView(children: getExpenseItems(snapshot));
+            },
+          ),
+        ));
+  }
+
+  getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
+    return snapshot.data.documents
+        .map(
+          (doc) => new Container(
+            child: ListTile(
+              title: Text(doc['in_datetime']),
+              subtitle: Text(doc['approved'].toString()),
+              onTap: () => onPressed(
+                  context,
+                  doc['phone'],
+                  doc['in_datetime'],
+                  doc['approved'].toString(),
+                  doc['purpose'],
+                  doc['out_datetime']),
+            ),
+          ),
+        )
+        .toList();
+  }
+
+  onPressed(BuildContext context, phone, in_datetime, approved, purpose,
+      out_datetime) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Center(
+            child: QrImage(
+              data: 
+              phone +
+                  "_" +
+                  in_datetime +
+                  "_" +
+                  approved +
+                  "_" +
+                  purpose + 
+                  "_" +
+                  out_datetime,
+            ),
+          ),
+        );
+      },
     );
   }
 }

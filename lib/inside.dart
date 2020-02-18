@@ -19,7 +19,7 @@ class Inside extends StatefulWidget {
 class _InsideState extends State<Inside> {
   @override
   Widget build(BuildContext context) {
-    MyUserState myUserState = Provider.of<MyUserState>(context);
+    MyUserState myUserState = Provider.of<MyUserState>(context,listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text("IIT Jammu GetOut"),
@@ -132,6 +132,8 @@ class _GetOutFormWidgetState extends State<GetOutFormWidget> {
                       phone: phoneController.text,
                       purpose: purposeController.text,
                     );
+                    print(entry_status);
+                    Navigator.pop(context);
                   }
                 }),
             widget.userState.isloading ? CircularProgressIndicator() : Text(""),
@@ -141,3 +143,4 @@ class _GetOutFormWidgetState extends State<GetOutFormWidget> {
     );
   }
 }
+
