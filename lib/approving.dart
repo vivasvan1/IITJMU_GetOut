@@ -22,7 +22,7 @@ class _ApprovingState extends State<Approving> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("IIT Jammu GetOut Aproving"),
+          title: Text("IIT Jammu GetOut"),
         ),
         body: Container(
           child: StreamBuilder(
@@ -40,35 +40,31 @@ class _ApprovingState extends State<Approving> {
                   style: TextStyle(fontSize: 25.0, color: Colors.grey),
                 ));
               return Center(
-                  child: ListView(children: getExpenseItems(snapshot)));
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                    Text(
+                      "Waiting for approval\nScan this at guard post",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    QrImage(
+                        padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+                        data: snapshot.data.documents[0].reference.documentID
+                                .toString() +
+                            "_" +
+                            widget.user.email),
+                    RaisedButton(
+                      child: Text("SIGN OUT"),
+                      onPressed: () =>
+                          Provider.of<UserRepository>(context, listen: false)
+                              .signOut(),
+                    ),
+                  ]
+                      // ListView(children: getExpenseItems(snapshot))
+                      ));
             },
           ),
         ));
-  }
-
-  getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
-    return snapshot.data.documents
-        .map(
-          (doc) => new Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-            child: QrImage(
-              data: doc.reference.documentID.toString() +
-                  "_" +
-                  widget.user.email +
-                  "_" +
-                  doc["phone"] +
-                  "_" +
-                  doc["in_datetime"] +
-                  "_" +
-                  doc["approved"].toString() +
-                  "_" +
-                  doc["purpose"] +
-                  "_" +
-                  doc["out_datetime"],
-            ),
-          ),
-        )
-        .toList();
   }
 }
