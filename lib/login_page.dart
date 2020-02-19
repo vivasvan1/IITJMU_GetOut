@@ -32,6 +32,7 @@ class _LoginPageState extends State<LoginPage> {
             user.status == Status.Authenticating
                 ? Center(child: CircularProgressIndicator())
                 : OutlineButton(
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                     splashColor: Colors.grey,
                     onPressed: () async {
                       if (!await user.signInWithGoogle())

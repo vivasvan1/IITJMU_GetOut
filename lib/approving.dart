@@ -30,7 +30,7 @@ class _ApprovingState extends State<Approving> {
                 .collection('users')
                 .document(widget.user.email.substring(0, 11))
                 .collection("inout_register")
-                .orderBy("approved", descending: false)
+                .where("approved", isEqualTo: false)
                 .snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (!snapshot.hasData)
@@ -49,44 +49,21 @@ class _ApprovingState extends State<Approving> {
     return snapshot.data.documents
         .map(
           (doc) => new Container(
-            child: ListTile(
-              title: Text(doc['in_datetime']),
-              subtitle: Text(doc['approved'].toString()),
-              onTap: () => onPressed(
-                  context,
-                  doc['phone'],
-                  doc['in_datetime'],
-                  doc['approved'].toString(),
-                  doc['purpose'],
-                  doc['out_datetime']),
+            alignment: Alignment.center,
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: QrImage(
+              data: doc["phone"] +
+                  "_" +
+                  doc["in_datetime"] +
+                  "_" +
+                  doc["approved"].toString() +
+                  "_" +
+                  doc["purpose"] +
+                  "_" +
+                  doc["out_datetime"],
             ),
           ),
         )
         .toList();
-  }
-
-  onPressed(BuildContext context, phone, in_datetime, approved, purpose,
-      out_datetime) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Center(
-            child: QrImage(
-              data: 
-              phone +
-                  "_" +
-                  in_datetime +
-                  "_" +
-                  approved +
-                  "_" +
-                  purpose + 
-                  "_" +
-                  out_datetime,
-            ),
-          ),
-        );
-      },
-    );
   }
 }
