@@ -19,7 +19,7 @@ class MyUserState extends ChangeNotifier {
         .document(user.email.substring(0, 11))
         .get()
         .then((result) {
-      print(result.data['state'] == "1");
+      // print(result.data['state'] == "1");
       if (result.data['state'] == "0") {
         _state = MyState.Inside;
         notifyListeners();
