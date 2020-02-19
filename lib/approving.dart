@@ -39,7 +39,8 @@ class _ApprovingState extends State<Approving> {
                   _loadingTextRussian,
                   style: TextStyle(fontSize: 25.0, color: Colors.grey),
                 ));
-              return ListView(children: getExpenseItems(snapshot));
+              return Center(
+                  child: ListView(children: getExpenseItems(snapshot)));
             },
           ),
         ));
@@ -52,7 +53,11 @@ class _ApprovingState extends State<Approving> {
             alignment: Alignment.center,
             padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
             child: QrImage(
-              data: doc["phone"] +
+              data: doc.reference.documentID.toString() +
+                  "_" +
+                  widget.user.email +
+                  "_" +
+                  doc["phone"] +
                   "_" +
                   doc["in_datetime"] +
                   "_" +
