@@ -40,9 +40,9 @@ class _ApprovingState extends State<Approving> {
                   style: TextStyle(fontSize: 25.0, color: Colors.grey),
                 ));
               return Center(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
                     Text(
                       "Waiting for approval\nScan this at guard post",
                       textAlign: TextAlign.center,
@@ -60,9 +60,9 @@ class _ApprovingState extends State<Approving> {
                           Provider.of<UserRepository>(context, listen: false)
                               .signOut(),
                     ),
-                  ]
-                      // ListView(children: getExpenseItems(snapshot))
-                      ));
+                  ],
+                ),
+              );
             },
           ),
         ));
