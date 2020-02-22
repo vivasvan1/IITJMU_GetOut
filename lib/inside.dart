@@ -84,8 +84,8 @@ class GetOutFormWidget extends StatefulWidget {
 
 class _GetOutFormWidgetState extends State<GetOutFormWidget> {
   final _formKey = GlobalKey<FormState>();
-  final phoneController = TextEditingController();
-  final purposeController = TextEditingController();
+  final phoneController = TextEditingController(text: "1234567890");
+  final purposeController = TextEditingController(text: "1234567890");
   final phoneValidator = PatternValidator(r'^([0-9]{10})$',
       errorText: "please enter a valid phone number");
   bool entry_status;
@@ -100,6 +100,7 @@ class _GetOutFormWidgetState extends State<GetOutFormWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TextFormField(
+              // initialValue: "1234567890",
               controller: purposeController,
               decoration: InputDecoration(
                 labelText: "Purpose",
@@ -114,6 +115,7 @@ class _GetOutFormWidgetState extends State<GetOutFormWidget> {
             ),
             SizedBox(height: 20),
             TextFormField(
+              // initialValue: "1234567890",
               controller: phoneController,
               decoration: InputDecoration(
                 labelText: "Phone Number",
@@ -135,8 +137,7 @@ class _GetOutFormWidgetState extends State<GetOutFormWidget> {
                     print(entry_status);
                     Navigator.pop(context);
                   }
-                }),
-            widget.userState.isloading ? CircularProgressIndicator() : Text(""),
+                }), 
           ],
         ),
       ),

@@ -2,14 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 import 'package:get_out/utls/inout_entry.dart';
 
 enum MyState { Outside, Inside, Approving, Loading }
 
 class MyUserState extends ChangeNotifier {
   MyState _state = MyState.Loading;
-  bool _isloading = false;
+  // bool _isloading = false;
   InOutEntry inout_entry;
   GoogleSignInAccount user;
 
@@ -43,13 +43,14 @@ class MyUserState extends ChangeNotifier {
   }
 
   MyState get state => _state;
-  bool get isloading => _isloading;
+  InOutEntry get inoutentry => inout_entry;
+  // bool get isloading => _isloading;
 
   Future<bool> doEntry({email, phone, purpose}) async {
     try {
-      DateTime now = DateTime.now();
-      _isloading = true;
-      notifyListeners();
+      // DateTime now = DateTime.now();
+      // _isloading = true;
+      // notifyListeners();
       DocumentReference docRef = Firestore.instance
           .collection('users')
           .document(user.email.substring(0, 11))
@@ -59,29 +60,28 @@ class MyUserState extends ChangeNotifier {
           .collection('users')
           .document(user.email.substring(0, 11));
       Firestore.instance.runTransaction((Transaction tx) async {
-        await tx.set(stateRef, {"state": "1"});
+        await tx.update(stateRef, {"state": "1","docRef":docRef.documentID});
         await tx.set(docRef, {
           'approved': false,
-          'in_datetime': DateFormat('yyyy-MM-dd-HH:mm:ss').format(now),
-          'out_datetime': DateFormat('yyyy-MM-dd-HH:mm:ss').format(now),
+          // 'in_datetime': DateFormat('yyyy-MM-dd-HH:mm:ss').format(now),
+          // 'out_datetime': DateFormat('yyyy-MM-dd-HH:mm:ss').format(now),
           'phone': phone,
           'purpose': purpose,
         });
       }).then((result) {
-        _isloading = false;
+        // _isloading = false;
         _state = MyState.Approving;
         inout_entry = InOutEntry.fromMap({
           'approved': false,
-          'in_datetime': DateFormat('yyyy-MM-dd HH:mm:ss').format(now),
-          'out_datetime': DateFormat('yyyy-MM-dd HH:mm:ss').format(now),
           'phone': phone,
           'purpose': purpose,
-        }, docRef);
+        },docRef);
         notifyListeners();
-        // Provider.of<UserState>(context,listen: false);
-        return true;
+      //   // Provider.of<UserState>(context,listen: false);
+      //   return true;
       }).catchError((error) {
-        _isloading = false;
+        _state = MyState.Inside;
+        // _isloading = false;
         notifyListeners();
         print("$error");
         Fluttertoast.showToast(msg: 'Error: $error');
@@ -93,8 +93,35 @@ class MyUserState extends ChangeNotifier {
     }
   }
 
-  doCancelEntry(){
-    _state = MyState.Inside;
-
+  doCancelEntry() async {
+    DocumentSnapshot docsnap = await Firestore.instance
+          .collection('users')
+          .document(user.email.substring(0, 11)).get();
+    DocumentReference canceling = Firestore.instance.collection("users").document(user.email.substring(0,11)).collection("inout_register").document(docsnap.data['docRef']);
+    DocumentReference docRefdocRef = Firestore.instance.collection("users").document(user.email.substring(0,11));
+    DocumentSnapshot docSnapdocRef = await Firestore.instance.collection("users").document(user.email.substring(0,11)).get();
+    Map x = docSnapdocRef.data;
+    x.remove("docRef");
+    
+    // docSnapdocRef.data.remove("docRef");
+    x["state"] = "0";
+    // print(x);
+    Firestore.instance.runTransaction((Transaction tx) async {
+        await tx.delete(canceling);
+        await tx.set(docRefdocRef,x);
+      }).then((result) {
+        // _isloading = false;
+        _state = MyState.Inside;
+        notifyListeners();
+      }).catchError((error) {
+        // _state = MyState.Inside;
+        // _isloading = false;
+        // notifyListeners();
+        print("$error");
+        Fluttertoast.showToast(msg: 'Error: $error');
+        return false;
+      });
+    // _state = MyState.Inside;
+    // notifyListeners();
   }
 }

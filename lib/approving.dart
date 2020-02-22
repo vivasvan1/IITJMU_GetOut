@@ -18,7 +18,8 @@ class Approving extends StatefulWidget {
 }
 
 class _ApprovingState extends State<Approving> {
-  static const String _loadingTextRussian = 'Loading...';
+  static const String _loadingText = 'Loading...';
+  String myApproved;
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +29,7 @@ class _ApprovingState extends State<Approving> {
           title: Text("IIT Jammu GetOut"),
         ),
         body: Container(
-          child: 
-          StreamBuilder(
+          child: StreamBuilder(
             stream: Firestore.instance
                 .collection('users')
                 .document(widget.user.email.substring(0, 11))
@@ -37,10 +37,15 @@ class _ApprovingState extends State<Approving> {
                 .where("approved", isEqualTo: false)
                 .snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.data.documents[0].data['approved']) {
+                myApproved = "0";
+              } else {
+                myApproved = "1";
+              }
               if (!snapshot.hasData)
                 return const Center(
                     child: Text(
-                  _loadingTextRussian,
+                  _loadingText,
                   style: TextStyle(fontSize: 25.0, color: Colors.grey),
                 ));
               return Center(
@@ -58,7 +63,9 @@ class _ApprovingState extends State<Approving> {
                             "_" +
                             snapshot.data.documents[0].data["phone"] +
                             "_" +
-                            snapshot.data.documents[0].data["purpose"],
+                            snapshot.data.documents[0].data["purpose"] +
+                            "_" +
+                            myApproved,
                         foregroundColor:
                             Theme.of(context).brightness == Brightness.dark
                                 ? Colors.white
@@ -89,6 +96,7 @@ class _ApprovingState extends State<Approving> {
       );
     } catch (e) {
       print(e);
+      
     }
   }
 }
