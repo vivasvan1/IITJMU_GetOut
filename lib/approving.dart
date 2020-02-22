@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:get_out/user_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
 
 class Approving extends StatefulWidget {
   GoogleSignInAccount user;
@@ -18,14 +19,17 @@ class Approving extends StatefulWidget {
 
 class _ApprovingState extends State<Approving> {
   static const String _loadingTextRussian = 'Loading...';
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    try {
+      return Scaffold(
         appBar: AppBar(
           title: Text("IIT Jammu GetOut"),
         ),
         body: Container(
-          child: StreamBuilder(
+          child: 
+          StreamBuilder(
             stream: Firestore.instance
                 .collection('users')
                 .document(widget.user.email.substring(0, 11))
@@ -50,21 +54,41 @@ class _ApprovingState extends State<Approving> {
                     ),
                     QrImage(
                         padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
-                        data: snapshot.data.documents[0].reference.documentID
-                                .toString() +
+                        data: widget.user.email +
                             "_" +
-                            widget.user.email),
-                    RaisedButton(
-                      child: Text("SIGN OUT"),
-                      onPressed: () =>
-                          Provider.of<UserRepository>(context, listen: false)
+                            snapshot.data.documents[0].data["phone"] +
+                            "_" +
+                            snapshot.data.documents[0].data["purpose"],
+                        foregroundColor:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        RaisedButton(
+                          child: Text("CANCEL"),
+                          onPressed: () =>
+                              Provider.of<MyUserState>(context, listen: false)
+                                  .doCancelEntry(),
+                        ),
+                        RaisedButton(
+                          child: Text("SIGN OUT"),
+                          onPressed: () => Provider.of<UserRepository>(context,
+                                  listen: false)
                               .signOut(),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               );
             },
           ),
-        ));
+        ),
+      );
+    } catch (e) {
+      print(e);
+    }
   }
 }

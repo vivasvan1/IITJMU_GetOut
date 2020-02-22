@@ -92,4 +92,9 @@ class MyUserState extends ChangeNotifier {
       return false;
     }
   }
+
+  doCancelEntry(){
+    _state = MyState.Inside;
+
+  }
 }
