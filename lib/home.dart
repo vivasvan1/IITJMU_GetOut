@@ -5,6 +5,7 @@ import 'package:get_out/user_state.dart';
 import 'utls/inout_entry.dart';
 import 'package:get_out/inside.dart';
 import 'package:get_out/approving.dart';
+import 'package:get_out/outside.dart';
 class UserInfoPage extends StatelessWidget {
   final GoogleSignInAccount user;
 
@@ -21,6 +22,7 @@ class UserInfoPage extends StatelessWidget {
             case MyState.Approving:
               return Approving(user: user);
             case MyState.Outside:
+              return Outside(user: user); 
             case MyState.Loading:
               return Center(child: CircularProgressIndicator(),);
             // return LoginPage();

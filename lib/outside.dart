@@ -8,17 +8,16 @@ import 'package:provider/provider.dart';
 import 'package:get_out/user_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
-import 'package:fluttertoast/fluttertoast.dart';
 
-class Approving extends StatefulWidget {
+class Outside extends StatefulWidget {
   GoogleSignInAccount user;
-  Approving({Key key, this.user}) : super(key: key);
+  Outside({Key key, this.user}) : super(key: key);
 
   @override
-  _ApprovingState createState() => _ApprovingState();
+  _OutsideState createState() => _OutsideState();
 }
 
-class _ApprovingState extends State<Approving> {
+class _OutsideState extends State<Outside> {
   static const String _loadingText = 'Loading...';
   DocumentSnapshot docSnapdocRef;
 
@@ -26,9 +25,10 @@ class _ApprovingState extends State<Approving> {
   Widget build(BuildContext context) {
     try {
       kuchbhi() async {
-      docSnapdocRef = await Provider.of<MyUserState>(context, listen: false).getuserdocRef();
-
+        docSnapdocRef = await Provider.of<MyUserState>(context, listen: false)
+            .getuserdocRef();
       }
+
       kuchbhi();
 
       return Scaffold(
@@ -51,12 +51,12 @@ class _ApprovingState extends State<Approving> {
                     } else {
                       if (snapshot.data.exists) {
                         if (snapshot.data.data.isNotEmpty) {
-                          if (snapshot.data.data["approved"] == false) {
+                          if (!snapshot.data.data.containsKey("in_datetime")) {
                             return Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 Text(
-                                  "Waiting for approval\nScan this at guard post",
+                                  "Your Request is Approved. Scan below qr while returning.",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(fontSize: 20),
                                 ),
@@ -68,7 +68,7 @@ class _ApprovingState extends State<Approving> {
                                         "_" +
                                         snapshot.data.data["purpose"] +
                                         "_" +
-                                        "0",
+                                        "1",
                                     foregroundColor:
                                         Theme.of(context).brightness ==
                                                 Brightness.dark
@@ -78,13 +78,6 @@ class _ApprovingState extends State<Approving> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
-                                    RaisedButton(
-                                      child: Text("CANCEL"),
-                                      onPressed: () => Provider.of<MyUserState>(
-                                              context,
-                                              listen: false)
-                                          .doCancelEntry(),
-                                    ),
                                     RaisedButton(
                                       child: Text("SIGN OUT"),
                                       onPressed: () =>
@@ -101,33 +94,20 @@ class _ApprovingState extends State<Approving> {
                             print("request was accepted!");
                             print("____________________________________");
                             Provider.of<MyUserState>(context, listen: false)
-                                .entryApproved();
+                                .insideEntryApproved(
+                                    docSnapdocRef.data);
                             return Text("");
                           }
                         } else {
                           return Text("");
                         }
-                      } else {
-                        // Request was rejected
-                        print("____________________________________");
-                        print("request was rejected!");
-                        print("____________________________________");
-                        Provider.of<MyUserState>(context, listen: false)
-                            .entryRejected();
-                        return Text("");
-                      }
+                      } else {}
                     }
                   }),
         ),
       );
     } catch (e) {
-      print(e);
-      Fluttertoast.showToast(msg: e.toString());
-      return Scaffold(
-          appBar: AppBar(
-            title: Text("IIT Jammu GetOut"),
-          ),
-          body: Text("$e"));
+      // print(e);
     }
   }
 }
