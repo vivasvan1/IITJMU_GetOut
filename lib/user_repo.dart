@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -24,20 +25,38 @@ class UserRepository extends ChangeNotifier {
     try {
       _status = Status.Authenticating;
       notifyListeners();
-      _googleUser = await _googleSignIn.signIn();
-      final GoogleSignInAuthentication googleAuth =
-          await _googleUser.authentication;
+      _googleSignIn.signIn().then((onValue) async {
+        print(onValue);
+        print("------------------------------------");
+        _googleUser = onValue;
+        if (_googleUser.email.substring(11, 26) == "@iitjammu.ac.in") {
+          final GoogleSignInAuthentication googleAuth =
+              await _googleUser.authentication;
+          final AuthCredential credential = GoogleAuthProvider.getCredential(
+            accessToken: googleAuth.accessToken,
+            idToken: googleAuth.idToken,
+          );
+          await _auth.signInWithCredential(credential);
+          // Firebase.instance.
 
-      final AuthCredential credential = GoogleAuthProvider.getCredential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      await _auth.signInWithCredential(credential);
-      
+        } else {
+          _googleSignIn.signOut();
+          _status = Status.Unauthenticated;
+          notifyListeners();
+        }
+      }).catchError((onError) {
+        // print(onError);
+        _googleSignIn.signOut();
+          Fluttertoast.showToast(msg: "Please ensure you use Institute ID (example : 2016ucs0001@iitjammu.ac.in).");
+        _status = Status.Unauthenticated;
+        notifyListeners();
+        // _googleSignIn.signOut();
+      });
       return true;
     } catch (e) {
       print(e);
       _status = Status.Unauthenticated;
+      Fluttertoast.showToast(msg: "$e");
       notifyListeners();
       return false;
     }

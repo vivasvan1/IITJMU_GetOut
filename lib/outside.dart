@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get_out/user_repo.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:form_field_validator/form_field_validator.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:get_out/user_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:async';
 
 class Outside extends StatefulWidget {
   GoogleSignInAccount user;
