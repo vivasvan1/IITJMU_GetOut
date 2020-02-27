@@ -27,7 +27,6 @@ class _ApprovingState extends State<Approving> {
     try {
       kuchbhi() async {
       docSnapdocRef = await Provider.of<MyUserState>(context, listen: false).getuserdocRef();
-
       }
       kuchbhi();
 
