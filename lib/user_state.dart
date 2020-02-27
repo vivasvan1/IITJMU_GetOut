@@ -14,7 +14,7 @@ class MyUserState extends ChangeNotifier {
   GoogleSignInAccount user;
   bool waitingForDocs = true;
 
-  getuserdocRef() async {
+  Future<DocumentSnapshot> getuserdocRef() async {
     DocumentSnapshot docSnapdocRef;
     docSnapdocRef = await Firestore.instance
         .collection("users")

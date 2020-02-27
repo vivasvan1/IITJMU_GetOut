@@ -20,22 +20,28 @@ class Approving extends StatefulWidget {
 
 class _ApprovingState extends State<Approving> {
   static const String _loadingText = 'Loading...';
-  DocumentSnapshot docSnapdocRef;
+  DocumentSnapshot docSnapdocRef = null;
+
+  @override
+  void initState() {
+    kuchbhi() async {
+      docSnapdocRef = await Provider.of<MyUserState>(context, listen: false)
+          .getuserdocRef();
+    }
+
+    kuchbhi();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     try {
-      kuchbhi() async {
-      docSnapdocRef = await Provider.of<MyUserState>(context, listen: false).getuserdocRef();
-      }
-      kuchbhi();
-
       return Scaffold(
         appBar: AppBar(
           title: Text("IIT Jammu GetOut"),
         ),
         body: Container(
-          child: Provider.of<MyUserState>(context, listen: false).waitingForDocs
+          child: docSnapdocRef == null 
               ? Center(child: CircularProgressIndicator())
               : StreamBuilder(
                   stream: Firestore.instance
